@@ -59,7 +59,7 @@ async def on_message(message):
             await message.channel.send("""Dzięki za zgłoszenie!
 Zostało ono przekazane do teamu i będzie rozpatrzone w niedalekiej przyszłości.
 """)
-            kanal = client.get_channel(714144868301013003)
+            kanal = client.get_channel(759148536930762783)
             member_ping = '<@' + str(message.author.id) + '>'
             await kanal.send(member_ping + " powiedział: " + message.content)
 
