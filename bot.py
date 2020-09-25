@@ -61,6 +61,9 @@ Zostało ono przekazane do teamu i będzie rozpatrzone w niedalekiej przyszłoś
 """)
             kanal = client.get_channel(759148536930762783)
             member_ping = '<@' + str(message.author.id) + '>'
-            await kanal.send(member_ping + " powiedział: " + message.content)
+            await kanal.send(member_ping + """ 
+""" + message.content + '\n-------------------------------')
+
+
 
 client.run(TOKEN)
