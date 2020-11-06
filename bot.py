@@ -63,7 +63,7 @@ Zostało ono przekazane do teamu i będzie rozpatrzone w niedalekiej przyszłoś
             member_ping = '<@' + str(message.author.id) + '>'
             await kanal.send(member_ping + """ 
 """ + message.content + '\n-------------------------------')
-    if message.author.id == 349606518594732055 and message.guild:
-        await message.add_reaction("Jerry:649266456080678943")
+    #if message.author.id == 349606518594732055 and message.guild:
+        #await message.add_reaction("Jerry:649266456080678943")
 
 client.run(TOKEN)
