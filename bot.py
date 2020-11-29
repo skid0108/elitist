@@ -4,7 +4,6 @@ import discord
 
 TOKEN = 'NzE5MjY1MzgyMTI0MjI0NjA0.Xt0_zg.26lDdEyu_WXpTOGDbKrN8Gr7OjE'
 client = discord.Client()
-intents = discord.Intents(messages=True, guilds=True)
 
 @client.event
 async def on_ready():
