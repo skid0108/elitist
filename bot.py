@@ -76,6 +76,22 @@ Zostało ono przekazane do teamu i będzie rozpatrzone w niedalekiej przyszłoś
             await member.send("KTOŚ CIĘ WZYYYYYYYWA")
             x +=1
         await message.channel.send(str(member) + " został przyzwany " + str(x) + " razy <:Pepega:590993310055792640>")
+    
+    elif "AWATAR" in message.content.upper():
+        if len(message.content) == 6:
+            member = message.author
+        else:
+            guild = client.get_guild(567043766108815381)
+            member_id = message.content[7:]
+            member = await guild.fetch_member(member_id)
+        
+        await message.channel.send(str(member.avatar_url))
+        await message.delete()
+
+    elif message.content.upper() == "DISCORDOWE ID":
+        await message.author.send("Twoje ID to " + str(message.author.id))
+        await message.delete()
+        
         
     
 
