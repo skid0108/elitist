@@ -91,7 +91,10 @@ Zostało ono przekazane do teamu i będzie rozpatrzone w niedalekiej przyszłoś
     elif message.content.upper() == "DISCORDOWE ID":
         await message.author.send("Twoje ID to " + str(message.author.id))
         await message.delete()
-        
+
+    elif message.attachments and message.channel.id == 711606924797280348:
+        await message.add_reaction("PeepoYes:647938639283879944")
+        await message.add_reaction("peepoNo:647938989742882816")
         
     
 
