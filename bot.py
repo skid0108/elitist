@@ -2,7 +2,8 @@ import os
 import discord
 
 TOKEN = "NzkxMzE2MjAyOTc0MjE2MjQy.X-NYpA.hYCliU9r1uKyFI7jlYOEzHPyN-o"
-client = discord.Client()
+intents = discord.Intents.all()
+client = discord.Client(intents=intents)
 
 
 @client.event
@@ -107,6 +108,24 @@ Zostało ono przekazane do teamu i będzie rozpatrzone w niedalekiej przyszłoś
 
 W razie problemów nie bój się napisać do Skid#7847""")
             await message.delete()
+
+@client.event
+async def on_raw_reaction_add(payload):
+    guild = client.get_guild(567043766108815381)
+    kanal = guild.get_channel(628647068436660255)
+    orkanal = guild.get_channel(569992958368284694)
+    wiad = await orkanal.fetch_message(710990524571713607)
+    user = await guild.fetch_member(payload.user_id)
+    if payload.message_id == wiad.id:
+        if payload.emoji.name == "PeepoBeers":
+            if user.top_role == guild.get_role(626144153864110090):
+                await user.add_roles(guild.get_role(628637262430863381))
+                await kanal.send("""<@&665635028872724481> <@&590871493001609226>
+Pojawił się nowy rekrut, """ + user.nick + "!")
+                await wiad.remove_reaction(payload.emoji, user)
+            else:
+                await user.send("Sorka, ale nie możesz nadać sobie tej roli. Napisz do administracji, dzięki!")
+                await wiad.remove_reaction(payload.emoji, user)
 
 
 
