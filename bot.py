@@ -120,7 +120,7 @@ async def on_raw_reaction_add(payload):
         if payload.emoji.name == "PeepoBeers":
             if user.top_role == guild.get_role(626144153864110090):
                 await user.add_roles(guild.get_role(628637262430863381))
-                await kanal.send("""<@&349606518594732055> <@&665635028872724481> <@&590871493001609226>
+                await kanal.send("""<@&609074752211910668> <@&665635028872724481> <@&590871493001609226>
 Pojawił się nowy rekrut, """ + user.mention + "!")
                 await wiad.remove_reaction(payload.emoji, user)
             else:
