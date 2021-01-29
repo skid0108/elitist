@@ -97,8 +97,10 @@ Zostało ono przekazane do teamu i będzie rozpatrzone w niedalekiej przyszłoś
 
     elif message.attachments:
         if message.channel.id == 789188671584600126 or message.channel.id == 711606924797280348:
-        	await message.add_reaction("PeepoYes:647938639283879944")
-        	await message.add_reaction("peepoNo:647938989742882816")
+            await message.add_reaction("PeepoYes:647938639283879944")
+            await message.add_reaction("peepoNo:647938989742882816")
+            await message.add_reaction("PvE:798653912075993149")
+            await message.add_reaction("PvP:798653320247771188")
 
     elif message.content == "/help":
             await message.author.send("""Witaj dzielny Strażniku! Oto lista moich funkcji!
