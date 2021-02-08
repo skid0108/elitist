@@ -5,17 +5,34 @@ TOKEN = "NzkxMzE2MjAyOTc0MjE2MjQy.X-NYpA.hYCliU9r1uKyFI7jlYOEzHPyN-o"
 intents = discord.Intents.all()
 client = discord.Client(intents=intents)
 
+shadow_bans = [226395472410050561, 622725935992406037]
+
 
 @client.event
 async def on_ready():
-    await client.change_presence(activity=discord.Game(name="Pilnowanie Zagubionych"))
+    await client.change_presence(activity=discord.Game(name="Pilnowanie Zagubionych", type=4, state="Patrzy"))
 
 
 @client.event
 async def on_raw_reaction_add(payload):
-    if payload.message_id == 722816539061125171:
-        guild = discord.utils.find(
-            lambda g: g.id == payload.guild_id, client.guilds)
+    guild = client.get_guild(567043766108815381)
+    kanal = guild.get_channel(628647068436660255)
+    orkanal = guild.get_channel(569992958368284694)
+    wiad = await orkanal.fetch_message(710990524571713607)
+    user = await guild.fetch_member(payload.user_id)
+    if payload.message_id == wiad.id:
+        if payload.emoji.name == "PeepoBeers":
+            if user.top_role == guild.get_role(626144153864110090):
+                await user.add_roles(guild.get_role(628637262430863381))
+                await kanal.send("""<@&609074752211910668> <@&665635028872724481> <@&590871493001609226>
+Pojawił się nowy rekrut, """ + user.mention + "!")
+                await wiad.remove_reaction(payload.emoji, user)
+            else:
+                await user.send("Sorka, ale nie możesz nadać sobie tej roli. Napisz do administracji, dzięki!")
+                await wiad.remove_reaction(payload.emoji, user)
+
+    elif payload.message_id == 722816539061125171:
+        print("henlo")
 
         raid_leader = '<@&645191000041586719>'
 
@@ -97,10 +114,8 @@ Zostało ono przekazane do teamu i będzie rozpatrzone w niedalekiej przyszłoś
 
     elif message.attachments:
         if message.channel.id == 789188671584600126 or message.channel.id == 711606924797280348:
-            await message.add_reaction("PeepoYes:647938639283879944")
-            await message.add_reaction("peepoNo:647938989742882816")
-            await message.add_reaction("PvE:798653912075993149")
-            await message.add_reaction("PvP:798653320247771188")
+        	await message.add_reaction("PeepoYes:647938639283879944")
+        	await message.add_reaction("peepoNo:647938989742882816")
 
     elif message.content == "/help":
             await message.author.send("""Witaj dzielny Strażniku! Oto lista moich funkcji!
@@ -111,25 +126,24 @@ Zostało ono przekazane do teamu i będzie rozpatrzone w niedalekiej przyszłoś
 W razie problemów nie bój się napisać do Skid#7847""")
             await message.delete()
 
+
+    if message.guild.id == 742679443071565916 and message.content == "restart":
+        liczba = 0
+        guild = message.guild
+        anchor = guild.get_role(743001990317211689)
+        for x in guild.members:
+            if anchor in x.roles:
+                await x.remove_roles(anchor, reason="Restart")
+                liczba += 1
+        await message.channel.send(f"Usunięto rolę 'Anchor' z {liczba} członków" )
+
+
+
 @client.event
-async def on_raw_reaction_add(payload):
-    guild = client.get_guild(567043766108815381)
-    kanal = guild.get_channel(628647068436660255)
-    orkanal = guild.get_channel(569992958368284694)
-    wiad = await orkanal.fetch_message(710990524571713607)
-    user = await guild.fetch_member(payload.user_id)
-    if payload.message_id == wiad.id:
-        if payload.emoji.name == "PeepoBeers":
-            if user.top_role == guild.get_role(626144153864110090):
-                await user.add_roles(guild.get_role(628637262430863381))
-                await kanal.send("""<@&609074752211910668> <@&665635028872724481> <@&590871493001609226>
-Pojawił się nowy rekrut, """ + user.mention + "!")
-                await wiad.remove_reaction(payload.emoji, user)
-            else:
-                await user.send("Sorka, ale nie możesz nadać sobie tej roli. Napisz do administracji, dzięki!")
-                await wiad.remove_reaction(payload.emoji, user)
-
-
+async def on_member_join(member):
+    if member.id in shadow_bans:
+        await member.send("Wystąpił błąd! Spróbuj ponownie!")
+        await member.kick()
 
 
 client.run(TOKEN)
