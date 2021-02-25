@@ -74,9 +74,7 @@ Pojawił się nowy rekrut, """ + user.mention + "!")
 @client.event
 async def on_message(message):
     if not message.guild and message.content.startswith("/zgłaszam"):
-       	await message.channel.send("""Dzięki za zgłoszenie!
-Zostało ono przekazane do teamu i będzie rozpatrzone w niedalekiej przyszłości.
-""")
+       	await message.channel.send("Dzięki!")
        	kanal = client.get_channel(759148536930762783)
        	member_ping = '<@' + str(message.author.id) + '>'
        	await kanal.send(member_ping + """ 
@@ -139,6 +137,76 @@ W razie problemów nie bój się napisać do Skid#7847""")
                 liczba += 1
         await message.channel.send(f"Usunięto rolę 'Anchor' z {liczba} członków" )
 
+    if message.content == "ankiecior" and message.author.id == 349606518594732055:
+        random = message.guild.get_role(594642201317998593)
+        for x in message.guild.members:
+            if random in x.roles:
+                try:
+                    await x.send("Hejo!\nSorry za DMa, ale przychodzę z ważną sprawą. Nadchodzą duże zmiany w naszym klanie (Zagubieni, Destiny 2), a przy ich okazji chcielibyśmy poznać i Twoją opinię. Przychodzę więc z pytaniem: co Ci w naszym klanie najbardziej przeszkadza? Co byś zmienił? Co jest tak, jak być powinno? Bardzo chętnie się dowiem, co myślicie o Zagubionych nie tylko pod względem gry, ale także i ludzi. Jeżeli chcesz się podzielić swoimi przemyśleniami, napisz /zgłaszam i zaraz po tym wszystko, co chcesz nam przekazać. Będę ci mega wdzięczny!\n~Skid.")
+                except:
+                    print(f"Nie pykło. ({x})")
+
+    if message.content.upper().startswith("/SEALE"):
+        guild = client.get_guild(567043766108815381)
+        T = []
+        role_id = [810804762894270464, 810804821589622814, 810804840422572043]
+        i = 0
+        while i < 3:
+            T.append(guild.get_role(role_id[i]))
+            i+=1
+
+        if len(message.content) == 6:
+            seale = discord.Embed(title = f"**Seale: {message.author.name}**", color=0xff0000)
+            seale.set_author(name = "", icon_url = "https://cdn.discordapp.com/attachments/708605390451114035/810902842729955348/seal.png")
+
+            if T[0] in message.author.roles:
+                seale.add_field(name = "**Dungeony**", value = ":white_check_mark:", inline = False)
+            else:
+                seale.add_field(name = "**Dungeony**", value = ":x:", inline = False)
+
+            if T[1] in message.author.roles:
+                seale.add_field(name = "**Raidy**", value = ":white_check_mark:",inline = False)
+            else:
+                seale.add_field(name = "**Raidy**", value = ":x:", inline = False)
+
+            if T[2] in message.author.roles:
+                seale.add_field(name = "**PvP**", value = ":white_check_mark:", inline = False)
+            else:
+                seale.add_field(name = "**PvP**", value = ":x:", inline = False)
+            seale.set_thumbnail(url = "https://cdn.discordapp.com/attachments/708605390451114035/810902842729955348/seal.png")
+
+        elif message.mentions:
+            odbiorca = message.mentions[0]
+            seale = discord.Embed(title = f"**Seale: {odbiorca}**", color=0xff0000)
+
+            if T[0] in odbiorca.roles:
+                seale.add_field(name = "**Dungeony**", value = ":white_check_mark:", inline = False)
+            else:
+                seale.add_field(name = "**Dungeony**", value = ":x:", inline = False)
+
+            if T[1] in odbiorca.roles:
+                seale.add_field(name = "**Raidy**", value = ":white_check_mark:",inline = False)
+            else:
+                seale.add_field(name = "**Raidy**", value = ":x:", inline = False)
+
+            if T[2] in odbiorca.roles:
+                seale.add_field(name = "**PvP**", value = ":white_check_mark:", inline = False)
+            else:
+                seale.add_field(name = "**PvP**", value = ":x:", inline = False)
+            seale.set_thumbnail(url = "https://cdn.discordapp.com/attachments/708605390451114035/810902842729955348/seal.png")
+
+        try:
+            await message.channel.send(embed = seale)
+        except:
+            await message.channel.send("Użyj //seale")
+
+    if message.content.upper() == "/WYMAGANIA":
+        wymag = discord.Embed(title = f"**Wymagania na seale**", color=0xff0000)
+        wymag.add_field(name = "**Dungeony**", value = "Zrobić wszystkie dostępne Dungeony co najmniej solo", inline = False)
+        wymag.add_field(name = "**Raidy**", value = "Zrobić wszystkie dostępne raidy, w tym co najmniej dwa flawless", inline = False)
+        wymag.add_field(name = "**PvP**", value = "Zrobić Flawlessa na Trialsach lub wbić 5500 Glory", inline = False)
+        wymag.set_thumbnail(url = "https://cdn.discordapp.com/attachments/708605390451114035/810902842729955348/seal.png")
+        await message.channel.send(embed=wymag)
 
 
 @client.event
@@ -146,6 +214,7 @@ async def on_member_join(member):
     if member.id in shadow_bans:
         await member.send("Wystąpił błąd! Spróbuj ponownie!")
         await member.kick()
+
 
 
 client.run(TOKEN)
