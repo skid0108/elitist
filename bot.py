@@ -6,6 +6,7 @@ intents = discord.Intents.all()
 client = discord.Client(intents=intents)
 
 shadow_bans = [226395472410050561, 622725935992406037]
+poczekalnia = []
 
 
 @client.event
@@ -198,7 +199,7 @@ W razie problemów nie bój się napisać do Skid#7847""")
         try:
             await message.channel.send(embed = seale)
         except:
-            await message.channel.send("Użyj //seale")
+            await message.channel.send("Użyj /seale")
 
     if message.content.upper() == "/WYMAGANIA":
         wymag = discord.Embed(title = f"**Wymagania na seale**", color=0xff0000)
@@ -208,12 +209,35 @@ W razie problemów nie bój się napisać do Skid#7847""")
         wymag.set_thumbnail(url = "https://cdn.discordapp.com/attachments/708605390451114035/810902842729955348/seal.png")
         await message.channel.send(embed=wymag)
 
+    if message.content == "jkjk" and message.author.id == 349606518594732055:
+        await message.channel.send(".")
+
 
 @client.event
 async def on_member_join(member):
     if member.id in shadow_bans:
         await member.send("Wystąpił błąd! Spróbuj ponownie!")
         await member.kick()
+
+@client.event
+async def on_voice_state_update(member, before, after):
+    if after.channel and after.channel.id == 813399282773262347:
+        poczekalnia.append(str(member.display_name))
+        await edytuj()
+        print(poczekalnia)
+
+    if before.channel and before.channel.id == 813399282773262347:
+        poczekalnia.remove(str(member.display_name))
+        await edytuj()
+        print(poczekalnia)
+ 
+async def edytuj():
+    channel = await client.fetch_channel(822898782894161930)
+    message = await channel.fetch_message(822899080921350154)
+    ss = "Osoby czekające w poczekalni:\n \n"
+    for x in poczekalnia:
+        ss+="- "+x+"\n"
+    await message.edit(content=ss)
 
 
 
