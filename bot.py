@@ -223,7 +223,7 @@ async def on_member_join(member):
 @client.event
 async def on_voice_state_update(member, before, after):
     if after.channel and after.channel.id == 813399282773262347:
-        if member.id not in  poczekalnia:
+        if str(member.display_name) not in  poczekalnia:
             poczekalnia.append(str(member.display_name))
             await edytuj()
 
