@@ -1,5 +1,6 @@
 import os
 import discord
+import asyncio
 
 TOKEN = "NzkxMzE2MjAyOTc0MjE2MjQy.X-NYpA.hYCliU9r1uKyFI7jlYOEzHPyN-o"
 intents = discord.Intents.all()
@@ -222,21 +223,34 @@ async def on_member_join(member):
 @client.event
 async def on_voice_state_update(member, before, after):
     if after.channel and after.channel.id == 813399282773262347:
-        poczekalnia.append(str(member.display_name))
-        await edytuj()
-        print(poczekalnia)
+        if member.id not in  poczekalnia:
+            poczekalnia.append(str(member.display_name))
+            await edytuj()
 
     if before.channel and before.channel.id == 813399282773262347:
-        poczekalnia.remove(str(member.display_name))
-        await edytuj()
-        print(poczekalnia)
+        await asyncio.sleep(300)
+        if not member.voice or member.voice and member.voice.channel != before.channel:
+            poczekalnia.remove(str(member.display_name))
+            await edytuj()
  
 async def edytuj():
     channel = await client.fetch_channel(822898782894161930)
     message = await channel.fetch_message(822899080921350154)
-    ss = "Osoby czekające w poczekalni:\n \n"
-    for x in poczekalnia:
-        ss+="- "+x+"\n"
+    print(poczekalnia)
+    c = len(poczekalnia)
+    if c > 0:
+        if c == 1:
+            ss = f"""```1: {poczekalnia[0]}\n2:\n3:\n4:\n5:\n```"""
+        elif c == 2:
+            ss = f"""```1: {poczekalnia[0]}\n2: {poczekalnia[1]}\n3:\n4:\n5:\n```"""
+        elif c == 3:
+            ss = f"""```1: {poczekalnia[0]}\n2: {poczekalnia[1]}\n3: {poczekalnia[2]}\n4:\n5:\n```"""
+        elif c == 4:
+            ss = f"""```1: {poczekalnia[0]}\n2: {poczekalnia[1]}\n3: {poczekalnia[2]}\n4: {poczekalnia[3]}\n5:\n```"""
+        elif c >= 5:
+            ss = f"""```1: {poczekalnia[0]}\n2: {poczekalnia[1]}\n3: {poczekalnia[2]}\n4: {poczekalnia[3]}\n5: {poczekalnia[4]}```"""
+    else:
+        ss = "```Kolejka jest pusta```"
     await message.edit(content=ss)
 
 
