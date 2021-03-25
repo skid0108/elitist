@@ -181,17 +181,17 @@ W razie problemów nie bój się napisać do Skid#7847""")
             odbiorca = message.mentions[0]
             seale = discord.Embed(title = f"**Seale: {odbiorca.display_name}**", color=0xff0000)
 
-            if T[0] in message.author.roles:
+            if T[0] in odbiorca.roles:
                 seale.add_field(name = "**Dungeony**", value = "<:dun_unlocked:824750414545027082>", inline = False)
             else:
                 seale.add_field(name = "**~~Dungeony~~**", value = "<:dun_not_unlocked:824755895492673566>", inline = False)
 
-            if T[1] in message.author.roles:
+            if T[1] in odbiorca.roles:
                 seale.add_field(name = "**Raidy**", value = "<:raid_unlocked:824741442148106270>",inline = False)
             else:
                 seale.add_field(name = "**~~Raidy~~**", value = "<:raid_not_unlocked:824755274362650637>", inline = False)
 
-            if T[2] in message.author.roles:
+            if T[2] in odbiorca.roles:
                 seale.add_field(name = "**PvP**", value = "<:pvp_unlocked:824759000553095168>", inline = False)
             else:
                 seale.add_field(name = "**~~PvP~~**", value = "<:pvp_not_unlocked:824759000142839888>", inline = False)
