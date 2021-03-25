@@ -158,44 +158,45 @@ W razie problemów nie bój się napisać do Skid#7847""")
             i+=1
 
         if len(message.content) == 6:
-            seale = discord.Embed(title = f"**Seale: {message.author.name}**", color=0xff0000)
+            seale = discord.Embed(title = f"**Seale: {message.author.display_name}**", color=0xff0000)
             seale.set_author(name = "", icon_url = "https://cdn.discordapp.com/attachments/708605390451114035/810902842729955348/seal.png")
 
             if T[0] in message.author.roles:
-                seale.add_field(name = "**Dungeony**", value = ":white_check_mark:", inline = False)
+                seale.add_field(name = "**Dungeony**", value = "<:dun_unlocked:824750414545027082>", inline = False)
             else:
-                seale.add_field(name = "**Dungeony**", value = ":x:", inline = False)
+                seale.add_field(name = "**~~Dungeony~~**", value = "<:dun_not_unlocked:824755895492673566>", inline = False)
 
             if T[1] in message.author.roles:
-                seale.add_field(name = "**Raidy**", value = ":white_check_mark:",inline = False)
+                seale.add_field(name = "**Raidy**", value = "<:raid_unlocked:824741442148106270>",inline = False)
             else:
-                seale.add_field(name = "**Raidy**", value = ":x:", inline = False)
+                seale.add_field(name = "**~~Raidy~~**", value = "<:raid_not_unlocked:824755274362650637>", inline = False)
 
             if T[2] in message.author.roles:
-                seale.add_field(name = "**PvP**", value = ":white_check_mark:", inline = False)
+                seale.add_field(name = "**PvP**", value = "<:pvp_unlocked:824759000553095168>", inline = False)
             else:
-                seale.add_field(name = "**PvP**", value = ":x:", inline = False)
+                seale.add_field(name = "**~~PvP~~**", value = "<:pvp_not_unlocked:824759000142839888>", inline = False)
             seale.set_thumbnail(url = "https://cdn.discordapp.com/attachments/708605390451114035/810902842729955348/seal.png")
 
         elif message.mentions:
             odbiorca = message.mentions[0]
-            seale = discord.Embed(title = f"**Seale: {odbiorca}**", color=0xff0000)
+            seale = discord.Embed(title = f"**Seale: {odbiorca.display_name}**", color=0xff0000)
 
-            if T[0] in odbiorca.roles:
-                seale.add_field(name = "**Dungeony**", value = ":white_check_mark:", inline = False)
+            if T[0] in message.author.roles:
+                seale.add_field(name = "**Dungeony**", value = "<:dun_unlocked:824750414545027082>", inline = False)
             else:
-                seale.add_field(name = "**Dungeony**", value = ":x:", inline = False)
+                seale.add_field(name = "**~~Dungeony~~**", value = "<:dun_not_unlocked:824755895492673566>", inline = False)
 
-            if T[1] in odbiorca.roles:
-                seale.add_field(name = "**Raidy**", value = ":white_check_mark:",inline = False)
+            if T[1] in message.author.roles:
+                seale.add_field(name = "**Raidy**", value = "<:raid_unlocked:824741442148106270>",inline = False)
             else:
-                seale.add_field(name = "**Raidy**", value = ":x:", inline = False)
+                seale.add_field(name = "**~~Raidy~~**", value = "<:raid_not_unlocked:824755274362650637>", inline = False)
 
-            if T[2] in odbiorca.roles:
-                seale.add_field(name = "**PvP**", value = ":white_check_mark:", inline = False)
+            if T[2] in message.author.roles:
+                seale.add_field(name = "**PvP**", value = "<:pvp_unlocked:824759000553095168>", inline = False)
             else:
-                seale.add_field(name = "**PvP**", value = ":x:", inline = False)
+                seale.add_field(name = "**~~PvP~~**", value = "<:pvp_not_unlocked:824759000142839888>", inline = False)
             seale.set_thumbnail(url = "https://cdn.discordapp.com/attachments/708605390451114035/810902842729955348/seal.png")
+
 
         try:
             await message.channel.send(embed = seale)
