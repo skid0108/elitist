@@ -7,6 +7,9 @@ intents = discord.Intents.all()
 client = discord.Client(intents=intents)
 
 shadow_bans = [226395472410050561, 622725935992406037]
+sweaty = []
+mid = []
+kinder = []
 poczekalnia = []
 
 
@@ -75,12 +78,39 @@ Pojawił się nowy rekrut, """ + user.mention + "!")
 
 @client.event
 async def on_message(message):
-    if not message.guild and message.content.startswith("/zgłaszam"):
-       	await message.channel.send("Dzięki!")
-       	kanal = client.get_channel(759148536930762783)
-       	member_ping = '<@' + str(message.author.id) + '>'
-       	await kanal.send(member_ping + """ 
-""" + message.content[10:] + '\n-------------------------------')
+    if not message.guild and message.content.startswith("/turniej"):
+        await message.channel.send("Zapisy do turnieju:\nWybierz dywizję, do której chcesz dołączyć poprzez wpisanie numeru od 1 do 3.:\n1: Sweaty\n2: Mid-sweaty\n3: Kindery")
+        jest = False
+
+        def check(m):
+            return m.channel == message.channel and m.author == message.author
+
+        try:
+            msg = await client.wait_for('message', check=check, timeout=15.0)
+            jest = True
+        except asyncio.TimeoutError:
+            await message.channel.send("Za długo, spróbuj ponownie!")
+
+        if jest:
+            if msg.content == "1" or msg.content == "2" or msg.content == "3":
+                await message.channel.send("Zapisałem Cię do turnieju. Powodzonka!")
+                if msg.content == "1":
+                    global sweaty
+                    sweaty.append(msg.author.id)
+                    await update()
+
+                elif msg.content == "2":
+                    global mid
+                    mid.append(msg.author.id)
+                    await update()
+
+                elif msg.content == "3":
+                    global kinder
+                    kinder.append(msg.author.id)
+                    await update()
+
+            else:
+                await message.channel.send("Wybierz liczbę od 1 do 3! Zacznij od nowa")
 
     elif "Przyzywam" in message.content and message.author.id == 349606518594732055:
         guild = client.get_guild(567043766108815381)
@@ -127,17 +157,6 @@ async def on_message(message):
 
 W razie problemów nie bój się napisać do Skid#7847""")
             await message.delete()
-
-
-    if message.guild.id == 742679443071565916 and message.content == "restart":
-        liczba = 0
-        guild = message.guild
-        anchor = guild.get_role(743001990317211689)
-        for x in guild.members:
-            if anchor in x.roles:
-                await x.remove_roles(anchor, reason="Restart")
-                liczba += 1
-        await message.channel.send(f"Usunięto rolę 'Anchor' z {liczba} członków" )
 
     if message.content == "ankiecior" and message.author.id == 349606518594732055:
         random = message.guild.get_role(594642201317998593)
@@ -253,6 +272,27 @@ async def edytuj():
     else:
         ss = "```Kolejka jest pusta```"
     await message.edit(content=ss)
+
+async def update():
+    channel = await client.fetch_channel(833466779027111946)
+    message = await channel.fetch_message(833468084797964349)
+    s = ""
+    m = ""
+    k = ""
+    for x in sweaty:
+        s+=f"<@{x}>\n"
+    for x in mid:
+        m+=f"<@{x}>\n"
+    for x in kinder:
+        k+=f"<@{x}>\n"
+    edyt = f"__Sweaty:__\n{s}__Midy:__\n{m}__Kindery:__\n{k}"
+    print(edyt)
+    await message.edit(content=edyt)
+    chanel = await client.fetch_channel(759148536930762783)
+    await chanel.send("Zmiana w turnieju. Nowe info to \n" + edyt)
+
+
+     
 
 
 
