@@ -7,9 +7,9 @@ intents = discord.Intents.all()
 client = discord.Client(intents=intents)
 
 shadow_bans = [226395472410050561, 622725935992406037]
-sweaty = []
-mid = []
-kinder = []
+sweaty = [349606518594732055, 446752650978000896, 811393497486852117, 366253807837118474, 444941100466176000, 410877434859225088]
+mid = [439042335603556352, 361594958639267842, 334673312703840256, 433999460234952705, 514550279186677781, 394207684804608010, 264114992595468288, 515632250876854273, 305587732737032192]
+kinder = [688071830279291002]
 poczekalnia = []
 
 
@@ -232,6 +232,10 @@ W razie problemów nie bój się napisać do Skid#7847""")
 
     if message.content == "jkjk" and message.author.id == 349606518594732055:
         await message.channel.send(".")
+
+    if message.content == "zesrałeś się" and message.author.id == 349606518594732055:
+        await update()
+        await message.channel.send("no u")
 
 
 @client.event
