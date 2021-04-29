@@ -7,15 +7,15 @@ intents = discord.Intents.all()
 client = discord.Client(intents=intents)
 
 shadow_bans = [226395472410050561, 622725935992406037]
-sweaty = [349606518594732055, 446752650978000896, 811393497486852117, 366253807837118474, 444941100466176000, 410877434859225088]
-mid = [439042335603556352, 361594958639267842, 334673312703840256, 433999460234952705, 514550279186677781, 394207684804608010, 264114992595468288, 515632250876854273, 305587732737032192]
-kinder = [688071830279291002]
+sweaty = [446752650978000896, 811393497486852117, 366253807837118474, 444941100466176000, 410877434859225088]
+mid = [439042335603556352, 361594958639267842, 334673312703840256, 433999460234952705, 394207684804608010, 264114992595468288, 515632250876854273, 305587732737032192, 267764360552644608, 215031749393121280, 277163303342702595, 688071830279291002]
 poczekalnia = []
 
 
 @client.event
 async def on_ready():
     await client.change_presence(activity=discord.Game(name="Pilnowanie Zagubionych", type=4, state="Patrzy"))
+    await update()
 
 
 @client.event
@@ -78,41 +78,36 @@ Pojawił się nowy rekrut, """ + user.mention + "!")
 
 @client.event
 async def on_message(message):
-    if not message.guild and message.content.startswith("/turniej"):
-        await message.channel.send("Zapisy do turnieju:\nWybierz dywizję, do której chcesz dołączyć poprzez wpisanie numeru od 1 do 3.:\n1: Sweaty\n2: Mid-sweaty\n3: Kindery")
-        jest = False
+    #if not message.guild and message.content.startswith("/turniej"):
+        #await message.channel.send("Zapisy do turnieju:\nWybierz dywizję, do której chcesz dołączyć poprzez wpisanie numeru od 1 do 3.:\n1: Sweaty\n2: Mid-sweaty\n3: Kindery")
+        #jest = False
 
-        def check(m):
-            return m.channel == message.channel and m.author == message.author
+        #def check(m):
+            #return m.channel == message.channel and m.author == message.author
 
-        try:
-            msg = await client.wait_for('message', check=check, timeout=15.0)
-            jest = True
-        except asyncio.TimeoutError:
-            await message.channel.send("Za długo, spróbuj ponownie!")
+        #try:
+            #msg = await client.wait_for('message', check=check, timeout=15.0)
+            #jest = True
+        #except asyncio.TimeoutError:
+            #await message.channel.send("Za długo, spróbuj ponownie!")
 
-        if jest:
-            if msg.content == "1" or msg.content == "2" or msg.content == "3":
-                await message.channel.send("Zapisałem Cię do turnieju. Powodzonka!")
-                if msg.content == "1":
-                    global sweaty
-                    sweaty.append(msg.author.id)
-                    await update()
+        #if jest:
+            #if msg.content == "1" or msg.content == "2" or msg.content == "3":
+                #await message.channel.send("Zapisałem Cię do turnieju. Powodzonka!")
+                #if msg.content == "1":
+                    #global sweaty
+                    #sweaty.append(msg.author.id)
+                    #await update()
 
-                elif msg.content == "2":
-                    global mid
-                    mid.append(msg.author.id)
-                    await update()
+                #elif msg.content == "2":
+                    #global mid
+                    #mid.append(msg.author.id)
+                    #await update()
 
-                elif msg.content == "3":
-                    global kinder
-                    kinder.append(msg.author.id)
-                    await update()
+            #else:
+                #await message.channel.send("Wybierz liczbę od 1 do 3! Zacznij od nowa")
 
-            else:
-                await message.channel.send("Wybierz liczbę od 1 do 3! Zacznij od nowa")
-
-    elif "Przyzywam" in message.content and message.author.id == 349606518594732055:
+    if "Przyzywam" in message.content and message.author.id == 349606518594732055:
         guild = client.get_guild(567043766108815381)
         skid = await guild.fetch_member(349606518594732055)
         skidchannel = skid.voice.channel
@@ -287,9 +282,7 @@ async def update():
         s+=f"<@{x}>\n"
     for x in mid:
         m+=f"<@{x}>\n"
-    for x in kinder:
-        k+=f"<@{x}>\n"
-    edyt = f"__Sweaty:__\n{s}__Midy:__\n{m}__Kindery:__\n{k}"
+    edyt = f"__Sweaty:__\n{s}__Midy:__\n{m}"
     print(edyt)
     await message.edit(content=edyt)
     chanel = await client.fetch_channel(759148536930762783)
