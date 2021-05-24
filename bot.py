@@ -73,6 +73,9 @@ Pojawił się nowy rekrut, """ + user.mention + "!")
         if str(payload.emoji) == "🇩":
             await channel.send(member_ping + " poprosił o szkolenie z DSC " + raid_leader)
 
+        if str(payload.emoji) == "🇻":
+            await channel.send(member_ping + " poprosił o szkolenie z VOG-a " + raid_leader)
+
         await message.remove_reaction(payload.emoji, member)
 
 
