@@ -15,7 +15,7 @@ poczekalnia = []
 @client.event
 async def on_ready():
     await client.change_presence(activity=discord.Game(name="Pilnowanie Zagubionych", type=4, state="Patrzy"))
-    await update()
+    #await update()
 
 
 @client.event
