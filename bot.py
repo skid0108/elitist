@@ -22,7 +22,7 @@ async def on_ready():
     #await update()
     guild = client.get_guild(847630031659728896)
     contr_mess_chan = guild.get_channel(847630031659728899)
-    contr_mess = await contr_mess_chan.fetch_message(847644299658264596)
+    contr_mess = await contr_mess_chan.fetch_message(847645033535766548)
     await wpisz_w_tablicę(contr_mess.content)
 
 
@@ -123,7 +123,7 @@ async def on_message(message):
             if len(message.attachments) == 1:
                 guild = client.get_guild(847630031659728896)
                 contr_mess_chan = guild.get_channel(847630031659728899)
-                contr_mess = await contr_mess_chan.fetch_message(847644299658264596)
+                contr_mess = await contr_mess_chan.fetch_message(847645033535766548)
 
                 if message.author.id not in wysłani_id:
                     wysłani.append(len(wysłani_id) + 1)
