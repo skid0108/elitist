@@ -2,13 +2,17 @@ import os
 import discord
 import asyncio
 
+from discord import channel
+
 TOKEN = "NzkxMzE2MjAyOTc0MjE2MjQy.X-NYpA.hYCliU9r1uKyFI7jlYOEzHPyN-o"
 intents = discord.Intents.all()
 client = discord.Client(intents=intents)
 
-shadow_bans = [226395472410050561, 622725935992406037]
-sweaty = [446752650978000896, 811393497486852117, 366253807837118474, 444941100466176000, 410877434859225088]
-mid = [439042335603556352, 361594958639267842, 334673312703840256, 433999460234952705, 394207684804608010, 264114992595468288, 515632250876854273, 305587732737032192, 267764360552644608, 215031749393121280, 277163303342702595, 688071830279291002]
+shadow_bans = []
+sweaty = []
+mid = []
+wysłani = []
+wysłani_id = []
 poczekalnia = []
 
 
@@ -16,6 +20,10 @@ poczekalnia = []
 async def on_ready():
     await client.change_presence(activity=discord.Game(name="Pilnowanie Zagubionych", type=4, state="Patrzy"))
     #await update()
+    guild = client.get_guild(847630031659728896)
+    contr_mess_chan = guild.get_channel(847630031659728899)
+    contr_mess = await contr_mess_chan.fetch_message(847644299658264596)
+    await wpisz_w_tablicę(contr_mess.content)
 
 
 @client.event
@@ -110,7 +118,36 @@ async def on_message(message):
             #else:
                 #await message.channel.send("Wybierz liczbę od 1 do 3! Zacznij od nowa")
 
-    if "Przyzywam" in message.content and message.author.id == 349606518594732055:
+    if not message.guild and message.author.bot == False:
+        if message.attachments:
+            if len(message.attachments) == 1:
+                guild = client.get_guild(847630031659728896)
+                contr_mess_chan = guild.get_channel(847630031659728899)
+                contr_mess = await contr_mess_chan.fetch_message(847644299658264596)
+
+                if message.author.id not in wysłani_id:
+                    wysłani.append(len(wysłani_id) + 1)
+                    wysłani_id.append(message.author.id)
+                    
+                    sklej = ""
+                    x = 0
+                    while x < len(wysłani):
+                        sklej+=f"{wysłani_id[x]} {wysłani[x]}\n"
+                        x+=1
+        
+                    await contr_mess.edit(content = sklej)
+                    cont_channel = client.get_channel(847579472043311104)
+                    await cont_channel.send(content = f"Zgłoszenie nr {wysłani[wysłani_id.index(message.author.id)]}:", file = await message.attachments[0].to_file())
+                    await message.channel.send(f"Poprawnie wysłano Twoje zgłoszenie! Twój numer to {wysłani[wysłani_id.index(message.author.id)]}. Powodzenia!")
+                else:
+                    await message.channel.send("Sorry, już się zgłosiłeś!")               
+            else:
+                await message.channel.send("Wyślij tylko jedno zdjęcie!\nSpróbuj ponownie.")
+        else:
+            await message.channel.send("Musisz wysłać jakiś załącznik!\nSpróbuj ponownie.")
+        
+
+    elif "Przyzywam" in message.content and message.author.id == 349606518594732055:
         guild = client.get_guild(567043766108815381)
         skid = await guild.fetch_member(349606518594732055)
         skidchannel = skid.voice.channel
@@ -155,15 +192,6 @@ async def on_message(message):
 
 W razie problemów nie bój się napisać do Skid#7847""")
             await message.delete()
-
-    if message.content == "ankiecior" and message.author.id == 349606518594732055:
-        random = message.guild.get_role(594642201317998593)
-        for x in message.guild.members:
-            if random in x.roles:
-                try:
-                    await x.send("Hejo!\nSorry za DMa, ale przychodzę z ważną sprawą. Nadchodzą duże zmiany w naszym klanie (Zagubieni, Destiny 2), a przy ich okazji chcielibyśmy poznać i Twoją opinię. Przychodzę więc z pytaniem: co Ci w naszym klanie najbardziej przeszkadza? Co byś zmienił? Co jest tak, jak być powinno? Bardzo chętnie się dowiem, co myślicie o Zagubionych nie tylko pod względem gry, ale także i ludzi. Jeżeli chcesz się podzielić swoimi przemyśleniami, napisz /zgłaszam i zaraz po tym wszystko, co chcesz nam przekazać. Będę ci mega wdzięczny!\n~Skid.")
-                except:
-                    print(f"Nie pykło. ({x})")
 
     if message.content.upper().startswith("/SEALE"):
         guild = client.get_guild(567043766108815381)
@@ -290,6 +318,15 @@ async def update():
     await message.edit(content=edyt)
     chanel = await client.fetch_channel(759148536930762783)
     await chanel.send("Zmiana w turnieju. Nowe info to \n" + edyt)
+
+
+async def wpisz_w_tablicę(string):
+    if len(string) > 1:
+        for x in string.splitlines():
+            wysłani_id.append(int(x.split()[0]))
+            wysłani.append(int(x.split()[1]))
+        print(wysłani)
+        print(wysłani_id)
 
 
      
