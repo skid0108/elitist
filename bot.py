@@ -119,32 +119,33 @@ async def on_message(message):
                 #await message.channel.send("Wybierz liczbę od 1 do 3! Zacznij od nowa")
 
     if not message.guild and message.author.bot == False:
-        if message.attachments:
-            if len(message.attachments) == 1:
-                guild = client.get_guild(847630031659728896)
-                contr_mess_chan = guild.get_channel(847630031659728899)
-                contr_mess = await contr_mess_chan.fetch_message(847645033535766548)
+        #if message.attachments:
+            #if len(message.attachments) == 1:
+                #guild = client.get_guild(847630031659728896)
+                #contr_mess_chan = guild.get_channel(847630031659728899)
+                #contr_mess = await contr_mess_chan.fetch_message(847645033535766548)
 
-                if message.author.id not in wysłani_id:
-                    wysłani.append(len(wysłani_id) + 1)
-                    wysłani_id.append(message.author.id)
+                #if message.author.id not in wysłani_id:
+                    #wysłani.append(len(wysłani_id) + 1)
+                    #wysłani_id.append(message.author.id)
                     
-                    sklej = ""
-                    x = 0
-                    while x < len(wysłani):
-                        sklej+=f"{wysłani_id[x]} {wysłani[x]}\n"
-                        x+=1
+                    #sklej = ""
+                    #x = 0
+                    #while x < len(wysłani):
+                        #sklej+=f"{wysłani_id[x]} {wysłani[x]}\n"
+                        #x+=1
         
-                    await contr_mess.edit(content = sklej)
-                    cont_channel = client.get_channel(847579472043311104)
-                    await cont_channel.send(content = f"Zgłoszenie nr {wysłani[wysłani_id.index(message.author.id)]}:", file = await message.attachments[0].to_file())
-                    await message.channel.send(f"Poprawnie wysłano Twoje zgłoszenie! Twój numer to {wysłani[wysłani_id.index(message.author.id)]}. Powodzenia!")
-                else:
-                    await message.channel.send("Sorry, już się zgłosiłeś!")               
-            else:
-                await message.channel.send("Wyślij tylko jedno zdjęcie!\nSpróbuj ponownie.")
-        else:
-            await message.channel.send("Musisz wysłać jakiś załącznik!\nSpróbuj ponownie.")
+                    #await contr_mess.edit(content = sklej)
+                    #cont_channel = client.get_channel(847579472043311104)
+                    #await cont_channel.send(content = f"Zgłoszenie nr {wysłani[wysłani_id.index(message.author.id)]}:", file = await message.attachments[0].to_file())
+                    #await message.channel.send(f"Poprawnie wysłano Twoje zgłoszenie! Twój numer to {wysłani[wysłani_id.index(message.author.id)]}. Powodzenia!")
+                #else:
+                    #await message.channel.send("Sorry, już się zgłosiłeś!")               
+            #else:
+                #await message.channel.send("Wyślij tylko jedno zdjęcie!\nSpróbuj ponownie.")
+        #else:
+            #await message.channel.send("Musisz wysłać jakiś załącznik!\nSpróbuj ponownie.")
+            await message.channel.send("Sorry, zapisy się już skończyły!")
         
 
     elif "Przyzywam" in message.content and message.author.id == 349606518594732055:
