@@ -20,10 +20,10 @@ poczekalnia = []
 async def on_ready():
     await client.change_presence(activity=discord.Game(name="Pilnowanie Zagubionych", type=4, state="Patrzy"))
     #await update()
-    guild = client.get_guild(847630031659728896)
-    contr_mess_chan = guild.get_channel(847630031659728899)
-    contr_mess = await contr_mess_chan.fetch_message(847645033535766548)
-    await wpisz_w_tablicę(contr_mess.content)
+    #guild = client.get_guild(847630031659728896)
+    #contr_mess_chan = guild.get_channel(847630031659728899)
+    #contr_mess = await contr_mess_chan.fetch_message(847645033535766548)
+    #await wpisz_w_tablicę(contr_mess.content)
 
 
 @client.event
@@ -37,7 +37,7 @@ async def on_raw_reaction_add(payload):
         if payload.emoji.name == "PeepoBeers":
             if user.top_role == guild.get_role(626144153864110090):
                 await user.add_roles(guild.get_role(628637262430863381))
-                await kanal.send("""<@&609074752211910668> <@&665635028872724481> <@&590871493001609226>
+                await kanal.send("""<@&655170106711736330>
 Pojawił się nowy rekrut, """ + user.mention + "!")
                 await wiad.remove_reaction(payload.emoji, user)
             else:
