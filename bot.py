@@ -3,6 +3,7 @@ import discord
 import asyncio
 
 from discord import channel
+from discord.gateway import EventListener
 
 TOKEN = "NzkxMzE2MjAyOTc0MjE2MjQy.X-NYpA.hYCliU9r1uKyFI7jlYOEzHPyN-o"
 intents = discord.Intents.all()
@@ -14,6 +15,8 @@ mid = []
 wysłani = []
 wysłani_id = []
 poczekalnia = []
+tablicaZebyNieWysylaloDwaRazy = []
+
 
 
 @client.event
@@ -118,7 +121,7 @@ async def on_message(message):
             #else:
                 #await message.channel.send("Wybierz liczbę od 1 do 3! Zacznij od nowa")
 
-    if not message.guild and message.author.bot == False:
+    #if not message.guild and message.author.bot == False:
         #if message.attachments:
             #if len(message.attachments) == 1:
                 #guild = client.get_guild(847630031659728896)
@@ -145,10 +148,10 @@ async def on_message(message):
                 #await message.channel.send("Wyślij tylko jedno zdjęcie!\nSpróbuj ponownie.")
         #else:
             #await message.channel.send("Musisz wysłać jakiś załącznik!\nSpróbuj ponownie.")
-            await message.channel.send("Sorry, zapisy się już skończyły!")
+            #await message.channel.send("Sorry, zapisy się już skończyły!")
         
 
-    elif "Przyzywam" in message.content and message.author.id == 349606518594732055:
+    if "Przyzywam" in message.content and message.author.id == 349606518594732055:
         guild = client.get_guild(567043766108815381)
         skid = await guild.fetch_member(349606518594732055)
         skidchannel = skid.voice.channel
@@ -283,7 +286,54 @@ async def on_voice_state_update(member, before, after):
         if not member.voice or member.voice and member.voice.channel != before.channel:
             poczekalnia.remove(str(member.display_name))
             await edytuj()
+
+
+@client.event
+async def on_member_update(before, after):
+    guild = client.get_guild(567043766108815381)
+    tamtoId = guild.get_role(717327419304050698)
+    if tamtoId in after.roles and after not in tablicaZebyNieWysylaloDwaRazy:
+        tablicaZebyNieWysylaloDwaRazy.append(after)
+        await after.send("Siema, zanim dodamy Cię do naszego serwera mamy trzy pytania.")
+        await after.send("1/3. Z jakiego klanu jesteś?")
+
+        def check(m):
+            return m.channel == after.dm_channel and m.author == after
+
+        try:
+            msg = await client.wait_for('message', check=check, timeout=28800.0)
+            klan = msg
+            await after.send("2/3. W jakim celu chcesz dołączyć do nas jako gość?")
+
+            try:
+                msg = await client.wait_for('message', check = check, timeout = 28800.0)
+                dlaczego = msg
+                await after.send("3/3. Wypisz nicki osób, które znasz lub z którymi grałeś, należących do naszego klanu.")
+
+                try:
+                    msg = await client.wait_for('message', check = check, timeout = 28800.0)
+                    poreczyciel = msg
+                    await after.send("Okej, dziena za odpowiedź. Zaraz ktoś się Tobą zajmie, o ile ktoś jest aktywny.")
+                    embed = discord.Embed(title = f"**Zgłoszenie nowego invadera - {after.nick}**", color=0xff0000)
+                    embed.add_field(name = "**Klan**", value = klan.content, inline = False)
+                    embed.add_field(name = "**Dlaczego chce dołączyć**", value = dlaczego.content, inline = False)
+                    embed.add_field(name = "**Znane osoby**", value = poreczyciel.content, inline = False)
+                    embed.set_thumbnail(url = after.avatar_url)
+                    await guild.get_channel(590242444633964557).send(embed=embed)
+
+                except asyncio.TimeoutError:
+                    await after.send("Twój czas na odpowiedź minął.")
+                    await guild.get_channel(590242444633964557).send(f"{after.name} nie wprowadził danych do formularza, do wyjebania.")
+
+            except asyncio.TimeoutError:
+                await after.send("Twój czas na odpowiedź minął.")
+                await guild.get_channel(590242444633964557).send(f"{after.name} nie wprowadził danych do formularza, do wyjebania.")
+
+        except asyncio.TimeoutError:
+            await after.send("Twój czas na odpowiedź minął.")
+            await guild.get_channel(590242444633964557).send(f"{after.name} nie wprowadził danych do formularza, do wyjebania.")
  
+
 async def edytuj():
     channel = await client.fetch_channel(822898782894161930)
     message = await channel.fetch_message(822899080921350154)
@@ -335,6 +385,4 @@ async def wpisz_w_tablicę(string):
 
 
 client.run(TOKEN)
-
-
 
