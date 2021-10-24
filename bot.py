@@ -296,6 +296,15 @@ async def on_voice_state_update(member, before, after):
         except:
             pass
 
+    if after.channel and after.channel.id == 901655726290767882 and len(after.channel.members) > 3:
+        await member.edit(mute=True)
+
+    if before.channel and before.channel.id == 901655726290767882 and after.channel.id != 901655726290767882:
+        try: 
+            await member.edit(mute=False)
+        except:
+            pass
+
 
 @client.event
 async def on_member_update(before, after):
