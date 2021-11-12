@@ -1,6 +1,7 @@
 import os
 import discord
 import asyncio
+from random import randint
 
 from discord import channel
 from discord.gateway import EventListener
@@ -16,6 +17,20 @@ wysłani = []
 wysłani_id = []
 poczekalnia = []
 tablicaZebyNieWysylaloDwaRazy = []
+
+raidy = {
+    4: "VoG",
+    3: "DSC",
+    2: "GoS",
+    1: "LW"
+}
+
+opcje = {
+    "JAKIEGOKOLWIEK": 4,
+    "NIENUDNEGO": 3,
+    "FAJNEGO": 2,
+    "NAJLEPSZEGO": 1
+}
 
 
 
@@ -266,6 +281,24 @@ W razie problemów nie bój się napisać do Skid#7847""")
     if message.content == "zesrałeś się" and message.author.id == 349606518594732055:
         await update()
         await message.channel.send("no u")
+
+    elif message.content.upper() == "WE LOSUJ RAIDA":
+            await message.channel.send('__jakiego raida chcesz byq?__\n*jakiegokolwiek\n*nienudnego\n*fajnego\n*najlepszego')
+
+            def check(m):
+                return m.channel == message.channel and m.author == message.author
+
+            try:
+                msg = await client.wait_for('message', check=check, timeout=45)
+                if msg.content.upper() in ["JAKIEGOKOLWIEK", "NIENUDNEGO", "FAJNEGO", "NAJLEPSZEGO"]:
+                    await message.channel.send("pog, twój raid to...")
+                    await asyncio.sleep(1)
+                    await message.channel.send(raidy[randint(1, opcje[msg.content.upper()])])
+                else:
+                    await message.channel.send("Zyebaueś")
+            except asyncio.TimeoutError:
+                await message.channel.send("Zyebaueś")
+
 
 
 @client.event
