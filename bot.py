@@ -17,6 +17,8 @@ wysłani = []
 wysłani_id = []
 poczekalnia = []
 tablicaZebyNieWysylaloDwaRazy = []
+destroy_channels_3 = []
+destroy_channels_2 = []
 
 raidy = {
     4: "VoG",
@@ -320,23 +322,50 @@ async def on_voice_state_update(member, before, after):
             poczekalnia.remove(str(member.display_name))
             await edytuj()
 
-    if after.channel and after.channel.id == 901001646581100604 and len(after.channel.members) > 3:
-        await member.edit(mute=True)
 
-    if before.channel and before.channel.id == 901001646581100604 and after.channel.id != 901001646581100604:
-        try: 
+
+    if after.channel and after.channel.id == 901849534332796948: #tworzenie max 3 osobowego i wpisywanie go do tablicy
+        nowy_channel = await after.channel.clone(name = "autolobby max 3")
+        destroy_channels_3.append(nowy_channel)
+        await member.move_to(nowy_channel)
+
+    if after.channel and after.channel.id == 901851165082390548: #tworzenie max 2 osobowego i wpisywanie go do tablicy
+        nowy_channel = await after.channel.clone(name = "autolobby max 2")
+        destroy_channels_2.append(nowy_channel)
+        await member.move_to(nowy_channel)
+
+    if before.channel and len(before.channel.members) == 0: #usuwanie kanału i wywalanie go z listy
+        if before.channel in destroy_channels_2 or before.channel in destroy_channels_3:
+            await before.channel.delete()
+            try:
+                destroy_channels_3.remove(before.channel)
+            except:
+                destroy_channels_2.remove(before.channel)
+
+
+
+
+    if after.channel:
+        if after.channel in destroy_channels_3 and after.channel != before.channel:
+            if len(after.channel.members) > 3:
+                await member.edit(mute=True)
+            else:
+                await asyncio.sleep(2)
+                await member.edit(mute=False)
+        elif after.channel.id == 901142385390657546:
+            await asyncio.sleep(2)
             await member.edit(mute=False)
-        except:
-            pass
 
-    if after.channel and after.channel.id == 901655726290767882 and len(after.channel.members) > 2:
-        await member.edit(mute=True)
-
-    if before.channel and before.channel.id == 901655726290767882 and after.channel.id != 901655726290767882:
-        try: 
+    if after.channel:
+        if after.channel in destroy_channels_2 and after.channel != before.channel:
+            if len(after.channel.members) > 2:
+                await member.edit(mute=True)
+            else:
+                await asyncio.sleep(2)
+                await member.edit(mute=False)
+        elif after.channel.id == 901142385390657546:
+            await asyncio.sleep(2)
             await member.edit(mute=False)
-        except:
-            pass
 
 
 @client.event
