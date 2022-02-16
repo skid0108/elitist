@@ -1,5 +1,6 @@
 import os
 import discord
+from discord import Colour
 import asyncio
 from random import randint
 
@@ -19,6 +20,7 @@ poczekalnia = []
 tablicaZebyNieWysylaloDwaRazy = []
 destroy_channels_3 = []
 destroy_channels_2 = []
+aplikacje = []
 
 raidy = {
     4: "VoG",
@@ -44,6 +46,17 @@ async def on_ready():
     #contr_mess_chan = guild.get_channel(847630031659728899)
     #contr_mess = await contr_mess_chan.fetch_message(847645033535766548)
     #await wpisz_w_tablicę(contr_mess.content)
+    guild = client.get_guild(567043766108815381)
+    role = guild.get_role(943450732621873242)
+    while True:
+        await role.edit(color=discord.Colour(0xFF0000))
+        await asyncio.sleep(2)
+        await role.edit(color=discord.Colour(0x000FF0))
+        await asyncio.sleep(2)
+        await role.edit(color=discord.Colour(0x0FF000))
+        await asyncio.sleep(2)
+
+
 
 
 @client.event
@@ -105,6 +118,26 @@ Pojawił się nowy rekrut, """ + user.mention + "!")
             await channel.send(member_ping + " poprosił o szkolenie z VOG-a " + raid_leader)
 
         await message.remove_reaction(payload.emoji, member)
+    
+    elif payload.message_id in aplikacje:
+        if payload.emoji == "✅":
+            await aplikacje[aplikacje.index(payload.message+id) + 1].send("Zostałeś przyjęty na serwer.")
+            roless = aplikacje[aplikacje.index(payload.message_id) + 1].roles
+            roless.append(guild.get_role(620014821105991680))
+            roless.remove(guild.get_role(717327419304050698))
+            await aplikacje[aplikacje.index(payload.message_id) + 1].edit(roles=roless)
+            aplikacje.remove(aplikacje.index(payload.message_id) + 1)
+            aplikacje.remove(aplikacje.index(payload.message_id))
+        
+        elif payload.emoji == "⛔":
+            await aplikacje[aplikacje.index(payload.message_id) + 1].send("Niestety nie zostałeś zaakceptowany na serwer.")
+            await aplikacje[aplikacje.index(payload.message_id) + 1].kick()
+            aplikacje.remove(aplikacje.index(payload.message_id) + 1)
+            aplikacje.remove(aplikacje.index(payload.message_id))
+
+    print(aplikacje)
+    print(payload.message_id)
+
 
 
 @client.event
@@ -394,12 +427,17 @@ async def on_member_update(before, after):
                     msg = await client.wait_for('message', check = check, timeout = 28800.0)
                     poreczyciel = msg
                     await after.send("Okej, dziena za odpowiedź. Zaraz ktoś się Tobą zajmie, o ile ktoś jest aktywny.")
-                    embed = discord.Embed(title = f"**Zgłoszenie nowego invadera - {after.nick}**", color=0xff0000)
+                    embed = discord.Embed(title = f"**Zgłoszenie nowego invadera - {after.name}**", color=0xff0000)
                     embed.add_field(name = "**Klan**", value = klan.content, inline = False)
                     embed.add_field(name = "**Dlaczego chce dołączyć**", value = dlaczego.content, inline = False)
                     embed.add_field(name = "**Znane osoby**", value = poreczyciel.content, inline = False)
                     embed.set_thumbnail(url = after.avatar_url)
-                    await guild.get_channel(590242444633964557).send(embed=embed)
+                    wiadomosc = await guild.get_channel(590242444633964557).send(embed=embed)
+                    aplikacje.append(wiadomosc.id)
+                    aplikacje.append(after)
+                    print(aplikacje)
+                    await wiadomosc.add_reaction("✅")
+                    await wiadomosc.add_reaction("⛔")
 
                 except asyncio.TimeoutError:
                     await after.send("Twój czas na odpowiedź minął.")
