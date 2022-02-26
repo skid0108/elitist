@@ -21,6 +21,7 @@ tablicaZebyNieWysylaloDwaRazy = []
 destroy_channels_3 = []
 destroy_channels_2 = []
 aplikacje = []
+aplikacjeLudzie = []
 
 raidy = {
     4: "VoG",
@@ -46,15 +47,6 @@ async def on_ready():
     #contr_mess_chan = guild.get_channel(847630031659728899)
     #contr_mess = await contr_mess_chan.fetch_message(847645033535766548)
     #await wpisz_w_tablicę(contr_mess.content)
-    guild = client.get_guild(567043766108815381)
-    role = guild.get_role(943450732621873242)
-    while True:
-        await role.edit(color=discord.Colour(0xFF0000))
-        await asyncio.sleep(2)
-        await role.edit(color=discord.Colour(0x000FF0))
-        await asyncio.sleep(2)
-        await role.edit(color=discord.Colour(0x0FF000))
-        await asyncio.sleep(2)
 
 
 
@@ -77,7 +69,7 @@ Pojawił się nowy rekrut, """ + user.mention + "!")
                 await user.send("Sorka, ale nie możesz nadać sobie tej roli. Napisz do administracji, dzięki!")
                 await wiad.remove_reaction(payload.emoji, user)
 
-    elif payload.message_id == 722816539061125171:
+    if payload.message_id == 722816539061125171:
         print("henlo")
 
         raid_leader = '<@&645191000041586719>'
@@ -119,29 +111,43 @@ Pojawił się nowy rekrut, """ + user.mention + "!")
 
         await message.remove_reaction(payload.emoji, member)
     
-    elif payload.message_id in aplikacje:
-        if payload.emoji == "✅":
-            await aplikacje[aplikacje.index(payload.message+id) + 1].send("Zostałeś przyjęty na serwer.")
-            roless = aplikacje[aplikacje.index(payload.message_id) + 1].roles
+    if payload.message_id in aplikacje and not payload.member.bot:
+        print(payload.emoji.id)
+        print(payload.emoji.name)
+        if payload.emoji.name == "PeepoYes":
+            dest = aplikacjeLudzie[aplikacje.index(payload.message_id)]
+            await dest.send("Zostałeś przyjęty na serwer!")
+            roless = aplikacjeLudzie[aplikacje.index(payload.message_id)].roles
             roless.append(guild.get_role(620014821105991680))
             roless.remove(guild.get_role(717327419304050698))
-            await aplikacje[aplikacje.index(payload.message_id) + 1].edit(roles=roless)
-            aplikacje.remove(aplikacje.index(payload.message_id) + 1)
-            aplikacje.remove(aplikacje.index(payload.message_id))
+            await aplikacjeLudzie[aplikacje.index(payload.message_id)].edit(roles=roless)
+            aplikacje.remove(payload.message_id)
+            aplikacjeLudzie.remove(dest)
         
-        elif payload.emoji == "⛔":
-            await aplikacje[aplikacje.index(payload.message_id) + 1].send("Niestety nie zostałeś zaakceptowany na serwer.")
-            await aplikacje[aplikacje.index(payload.message_id) + 1].kick()
-            aplikacje.remove(aplikacje.index(payload.message_id) + 1)
-            aplikacje.remove(aplikacje.index(payload.message_id))
-
-    print(aplikacje)
-    print(payload.message_id)
+        elif payload.emoji.name == "peepoNo":
+            dest = aplikacjeLudzie[aplikacje.index(payload.message_id)]
+            await aplikacjeLudzie[aplikacje.index(payload.message_id)].send("Niestety nie zostałeś zaakceptowany na serwer.")
+            await aplikacjeLudzie[aplikacje.index(payload.message_id)].kick()
+            aplikacje.remove(payload.message_id)
+            aplikacjeLudzie.remove(dest)
 
 
 
 @client.event
 async def on_message(message):
+    if message.content == "rgbjk":
+        await message.channel.send("ok")
+        guild = client.get_guild(567043766108815381)
+        role = guild.get_role(943450732621873242)
+        colours = [0xFF0000, 0x00FF00, 0x0000FF]
+        i = 0
+
+        while True:
+            await asyncio.sleep(5)
+            i = (i + 1) % 3
+            print("Color changed")
+            await role.edit(colour=discord.Colour(colours[i]))
+
     #if not message.guild and message.content.startswith("/turniej"):
         #await message.channel.send("Zapisy do turnieju:\nWybierz dywizję, do której chcesz dołączyć poprzez wpisanie numeru od 1 do 3.:\n1: Sweaty\n2: Mid-sweaty\n3: Kindery")
         #jest = False
@@ -246,69 +252,6 @@ async def on_message(message):
 
 W razie problemów nie bój się napisać do Skid#7847""")
             await message.delete()
-
-    if message.content.upper().startswith("/SEALE"):
-        guild = client.get_guild(567043766108815381)
-        T = []
-        role_id = [810804762894270464, 810804821589622814, 810804840422572043]
-        i = 0
-        while i < 3:
-            T.append(guild.get_role(role_id[i]))
-            i+=1
-
-        if len(message.content) == 6:
-            seale = discord.Embed(title = f"**Seale: {message.author.display_name}**", color=0xff0000)
-            seale.set_author(name = "", icon_url = "https://cdn.discordapp.com/attachments/708605390451114035/810902842729955348/seal.png")
-
-            if T[0] in message.author.roles:
-                seale.add_field(name = "**Dungeony**", value = "<:dun_unlocked:824750414545027082>", inline = False)
-            else:
-                seale.add_field(name = "**~~Dungeony~~**", value = "<:dun_not_unlocked:824755895492673566>", inline = False)
-
-            if T[1] in message.author.roles:
-                seale.add_field(name = "**Raidy**", value = "<:raid_unlocked:824741442148106270>",inline = False)
-            else:
-                seale.add_field(name = "**~~Raidy~~**", value = "<:raid_not_unlocked:824755274362650637>", inline = False)
-
-            if T[2] in message.author.roles:
-                seale.add_field(name = "**PvP**", value = "<:pvp_unlocked:824759000553095168>", inline = False)
-            else:
-                seale.add_field(name = "**~~PvP~~**", value = "<:pvp_not_unlocked:824759000142839888>", inline = False)
-            seale.set_thumbnail(url = "https://cdn.discordapp.com/attachments/708605390451114035/810902842729955348/seal.png")
-
-        elif message.mentions:
-            odbiorca = message.mentions[0]
-            seale = discord.Embed(title = f"**Seale: {odbiorca.display_name}**", color=0xff0000)
-
-            if T[0] in odbiorca.roles:
-                seale.add_field(name = "**Dungeony**", value = "<:dun_unlocked:824750414545027082>", inline = False)
-            else:
-                seale.add_field(name = "**~~Dungeony~~**", value = "<:dun_not_unlocked:824755895492673566>", inline = False)
-
-            if T[1] in odbiorca.roles:
-                seale.add_field(name = "**Raidy**", value = "<:raid_unlocked:824741442148106270>",inline = False)
-            else:
-                seale.add_field(name = "**~~Raidy~~**", value = "<:raid_not_unlocked:824755274362650637>", inline = False)
-
-            if T[2] in odbiorca.roles:
-                seale.add_field(name = "**PvP**", value = "<:pvp_unlocked:824759000553095168>", inline = False)
-            else:
-                seale.add_field(name = "**~~PvP~~**", value = "<:pvp_not_unlocked:824759000142839888>", inline = False)
-            seale.set_thumbnail(url = "https://cdn.discordapp.com/attachments/708605390451114035/810902842729955348/seal.png")
-
-
-        try:
-            await message.channel.send(embed = seale)
-        except:
-            await message.channel.send("Użyj /seale")
-
-    if message.content.upper() == "/WYMAGANIA":
-        wymag = discord.Embed(title = f"**Wymagania na seale**", color=0xff0000)
-        wymag.add_field(name = "**Dungeony**", value = "Zrobić wszystkie dostępne Dungeony co najmniej solo", inline = False)
-        wymag.add_field(name = "**Raidy**", value = "Zrobić wszystkie dostępne raidy, w tym co najmniej dwa flawless", inline = False)
-        wymag.add_field(name = "**PvP**", value = "Zrobić Flawlessa na Trialsach lub wbić 5500 Glory", inline = False)
-        wymag.set_thumbnail(url = "https://cdn.discordapp.com/attachments/708605390451114035/810902842729955348/seal.png")
-        await message.channel.send(embed=wymag)
 
     if message.content == "jkjk" and message.author.id == 349606518594732055:
         await message.channel.send(".")
@@ -433,11 +376,11 @@ async def on_member_update(before, after):
                     embed.add_field(name = "**Znane osoby**", value = poreczyciel.content, inline = False)
                     embed.set_thumbnail(url = after.avatar_url)
                     wiadomosc = await guild.get_channel(590242444633964557).send(embed=embed)
+                    print(wiadomosc.id)
                     aplikacje.append(wiadomosc.id)
-                    aplikacje.append(after)
-                    print(aplikacje)
-                    await wiadomosc.add_reaction("✅")
-                    await wiadomosc.add_reaction("⛔")
+                    aplikacjeLudzie.append(after)
+                    await wiadomosc.add_reaction(":PeepoYes:647938639283879944")
+                    await wiadomosc.add_reaction(":peepoNo:647938989742882816")
 
                 except asyncio.TimeoutError:
                     await after.send("Twój czas na odpowiedź minął.")
