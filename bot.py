@@ -11,11 +11,6 @@ TOKEN = "NzkxMzE2MjAyOTc0MjE2MjQy.X-NYpA.hYCliU9r1uKyFI7jlYOEzHPyN-o"
 intents = discord.Intents.all()
 client = discord.Client(intents=intents)
 
-shadow_bans = []
-sweaty = []
-mid = []
-wysłani = []
-wysłani_id = []
 poczekalnia = []
 tablicaZebyNieWysylaloDwaRazy = []
 destroy_channels_3 = []
@@ -119,6 +114,14 @@ async def on_message(message):
     if "RATIO" in message.content.upper():
         await message.channel.send(ratio[randint(1, 21)])
 
+    if "!SNIPE" in message.content.upper():
+        target = await client.get_guild(567043766108815381).fetch_member(message.content[7:])
+        print(message.content[7:])
+        print(target)
+        target_channel = client.get_channel(567061405346299904)
+        for i in range(0, 3):
+            await asyncio.sleep(15)
+            await target.move_to(target_channel)
 
 
     if message.content == "rgbjk":
@@ -160,10 +163,6 @@ async def on_message(message):
         await message.channel.send(str(member.avatar_url))
         await message.delete()
 
-    elif message.content.upper() == "/DISCORDOWE ID":
-        await message.author.send("Twoje ID to " + str(message.author.id))
-        await message.delete()
-
     elif message.attachments:
         if message.channel.id == 789188671584600126 or message.channel.id == 711606924797280348:
             await message.add_reaction("PeepoYes:647938639283879944")
@@ -171,21 +170,8 @@ async def on_message(message):
             await message.add_reaction("PvE:798653912075993149")
             await message.add_reaction("PvP:798653320247771188")
 
-    elif message.content == "/help":
-            await message.author.send("""Witaj dzielny Strażniku! Oto lista moich funkcji!
-        
-/awatar [@ktoś] - wyświetla awatar osoby pingowanej, wyświetli Twój jeżeli żaden nie został podany
-/discordowe id - wysyła wiadomość prywatną z Twoim discordowym ID
-
-W razie problemów nie bój się napisać do Skid#7847""")
-            await message.delete()
-
-    if message.content == "jkjk" and message.author.id == 349606518594732055:
+    elif message.content == "jkjk" and message.author.id == 349606518594732055:
         await message.channel.send(".")
-
-    if message.content == "zesrałeś się" and message.author.id == 349606518594732055:
-        await update()
-        await message.channel.send("no u")
 
     elif message.content.upper() == "WE LOSUJ RAIDA":
             await message.channel.send('__jakiego raida chcesz byq?__\n*jakiegokolwiek\n*nienudnego\n*fajnego\n*najlepszego')
@@ -215,12 +201,6 @@ W razie problemów nie bój się napisać do Skid#7847""")
                 xd+=1
         await message.channel.send(msg)
 
-
-@client.event
-async def on_member_join(member):
-    if member.id in shadow_bans:
-        await member.send("Wystąpił błąd! Spróbuj ponownie!")
-        await member.kick()
 
 @client.event
 async def on_voice_state_update(member, before, after):
@@ -274,6 +254,9 @@ async def on_voice_state_update(member, before, after):
         nowy_channel = await after.channel.clone(name = "autolobby max 2")
         destroy_channels_2.append(nowy_channel)
         await member.move_to(nowy_channel)
+
+    if member.id == 366253807837118474:
+        await member.move_to(None, reason="Error 403 - contact support")
 
 
 
@@ -387,36 +370,7 @@ async def edytuj():
             ss = f"""```1: {poczekalnia[0]}\n2: {poczekalnia[1]}\n3: {poczekalnia[2]}\n4: {poczekalnia[3]}\n5: {poczekalnia[4]}```"""
     else:
         ss = "```Kolejka jest pusta```"
-    await message.edit(content=ss)
-
-async def update():
-    channel = await client.fetch_channel(833466779027111946)
-    message = await channel.fetch_message(833468084797964349)
-    s = ""
-    m = ""
-    k = ""
-    for x in sweaty:
-        s+=f"<@{x}>\n"
-    for x in mid:
-        m+=f"<@{x}>\n"
-    edyt = f"__Sweaty:__\n{s}__Midy:__\n{m}"
-    print(edyt)
-    await message.edit(content=edyt)
-    chanel = await client.fetch_channel(759148536930762783)
-    await chanel.send("Zmiana w turnieju. Nowe info to \n" + edyt)
-
-
-async def wpisz_w_tablicę(string):
-    if len(string) > 1:
-        for x in string.splitlines():
-            wysłani_id.append(int(x.split()[0]))
-            wysłani.append(int(x.split()[1]))
-        print(wysłani)
-        print(wysłani_id)
-
-
-     
-
+    await message.edit(content=ss)  
 
 
 client.run(TOKEN)
