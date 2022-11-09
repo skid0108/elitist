@@ -102,7 +102,7 @@ def pokazTopCzasy():
         name = x["raidName"]
         id = x["time"]
         activityId = x["activityId"]
-        returnString = returnString + (f"{name} - [{timeFormat(id)}](https://raid.report/pgcr/{activityId})\n")
+        returnString = returnString + (f"{name:20} - [{timeFormat(id)}](https://raid.report/pgcr/{activityId})\n")
     return returnString
 
 
