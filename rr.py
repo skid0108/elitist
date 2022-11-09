@@ -46,7 +46,7 @@ def czasy(user):
             else:
                 raidDict["time"] = "5000"
                 raidDict["raidName"] = rh.raidHashes[y]
-                raidDict["activityId"] = userActivities[userActivities.index(x)]["values"]["fastestFullClear"]["instanceId"]
+                raidDict["activityId"] = ""
             czasyTablica.append(raidDict)
     return czasyTablica
 
