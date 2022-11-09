@@ -73,7 +73,7 @@ async def ticker():
                             y["activityId"] = x["activityId"]
                             zapisz()
                         break
-        await asyncio.sleep(5)
+        await asyncio.sleep(180)
 
 
 def dodajKonto(url, userName):
@@ -104,17 +104,17 @@ def pokazTopCzasy():
 
 
 def zapisz():
-    with open("/db/times.json", "w") as outfile:
+    with open("/app/db/times.json", "w") as outfile:
         outfile.write(json.dumps(globalTimes))
-    with open("/db/accounts.json", "w") as outfile:
+    with open("/app/db/accounts.json", "w") as outfile:
         outfile.write(json.dumps(zarejestrowaneKonta))
 
 
 def wczytaj():
-    with open("/db/times.json", "r") as outfile:
+    with open("/app/db/times.json", "r") as outfile:
         global globalTimes
         globalTimes = json.loads(outfile.read())
-    with open("/db/accounts.json", "r") as outfile:
+    with open("/app/db/accounts.json", "r") as outfile:
         global zarejestrowaneKonta
         zarejestrowaneKonta = json.loads(outfile.read())
 
