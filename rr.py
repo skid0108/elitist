@@ -104,17 +104,17 @@ def pokazTopCzasy():
 
 
 def zapisz():
-    with open("C:/Users/mikop/Desktop/unstable/mechiza/db/times.json", "w") as outfile:
+    with open("/db/times.json", "w") as outfile:
         outfile.write(json.dumps(globalTimes))
-    with open("C:/Users/mikop/Desktop/unstable/mechiza/db/accounts.json", "w") as outfile:
+    with open("/db/accounts.json", "w") as outfile:
         outfile.write(json.dumps(zarejestrowaneKonta))
 
 
 def wczytaj():
-    with open("C:/Users/mikop/Desktop/unstable/mechiza/db/times.json", "r") as outfile:
+    with open("/db/times.json", "r") as outfile:
         global globalTimes
         globalTimes = json.loads(outfile.read())
-    with open("C:/Users/mikop/Desktop/unstable/mechiza/db/accounts.json", "r") as outfile:
+    with open("/db/accounts.json", "r") as outfile:
         global zarejestrowaneKonta
         zarejestrowaneKonta = json.loads(outfile.read())
 
