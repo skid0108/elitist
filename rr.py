@@ -59,20 +59,23 @@ def getCzasy(userList):
     return returnList
 
 
+def updateCzasy():
+    global globalTimes
+    czasy = getCzasy(zarejestrowaneKonta)
+    for p in czasy:
+        for x in p:
+            for y in globalTimes:
+                if x["raidName"] == y["raidName"]:
+                    if int(x["time"]) < int(y["time"]):
+                        y["time"] = x["time"]
+                        y["activityId"] = x["activityId"]
+                        zapisz()
+                    break
+
 async def ticker():
     while True:
-        print("ok")
-        global globalTimes
-        czasy = getCzasy(zarejestrowaneKonta)
-        for p in czasy:
-            for x in p:
-                for y in globalTimes:
-                    if x["raidName"] == y["raidName"]:
-                        if int(x["time"]) < int(y["time"]):
-                            y["time"] = x["time"]
-                            y["activityId"] = x["activityId"]
-                            zapisz()
-                        break
+        print("tick!")
+        updateCzasy()
         await asyncio.sleep(180)
 
 
@@ -87,6 +90,7 @@ def dodajKonto(url, userName):
             global zarejestrowaneKonta
             zarejestrowaneKonta.append((userName, x.get("membershipId")))
             zapisz()
+            updateCzasy()
             return f"Ustawiono Twoje konto na {url}"
             #return requests.get(basicUrl+x['membershipId'], headers=headers).json()["response"]["activities"]
     return "Nie znaleziono uzytkownika o podanej nazwie"
