@@ -5,118 +5,106 @@ import asyncio
 from random import randint
 import enums as p
 import rr as rr
+import emblemFinder as EF
 
-TOKEN = "NzkxMzE2MjAyOTc0MjE2MjQy.X-NYpA.hYCliU9r1uKyFI7jlYOEzHPyN-o"
 intents = discord.Intents.all()
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
-activeEvents = []
-
-
-class Event:
-    message = None
-    members = []
-    raidName = ""
-    raidType = 0
-    wiad = None
-
-    def __init__(self, eRaid):
-        self.raidName = eRaid
-        self.raidType = p.raidSwitch[eRaid]
-        self.members = p.raidMembers[self.raidType]
-        print(self.members)
-
-    def __del__(self):
-        activeEvents.remove((self, self.message))
-
-    def update(self, mID, wiad):
-        self.message = mID
-        self.wiad = wiad
-        activeEvents.append((self, self.message))
-
-    def Embed(self):
-        rtn = discord.Embed(title = self.raidName, color = 0xff0000)
-        roleString = ""
-        for x in self.members:
-            roleString=roleString+f"{x[0]}:  {x[1]}\n"
-        rtn.add_field(name = "Role:", value = roleString, inline = False)
-        rtn.set_footer(text="Zbieramy się jak wszystkie miejsca będą pełne")
-        #rtn.add_field(name = "Cut:", value = f"{self.cut}$", inline = True)
-        #rtn.add_field(name = "Class:", value = f"{self.klasa}", inline = True)
-        return rtn
-
-    async def Dodaj(self, numer, kto):
-        if self.members[numer][1] != "":
-            for x in self.members:
-                if x[1] == kto:
-                    return
-            self.members[numer] = (self.members[numer][0], kto)
-            await self.wiad.edit(embed=self.Embed())
-        
+ORACLE=None
+TOKEN = "NzkxMzE2MjAyOTc0MjE2MjQy.X-NYpA.hYCliU9r1uKyFI7jlYOEzHPyN-o"
         
 
 @client.event
 async def on_ready():
     await client.change_presence(activity=discord.Activity(name="you fail", type=3))
     await tree.sync(guild=discord.Object(id=968943687272898612))
+    global ORACLE
+    ORACLE = client.get_guild(968943687272898612)
+    rr.initialize([ORACLE])
+    await rr.ranksReset(None, True)
     await rr.ticker()
+    
+
+def wczytajGildie():
+    return client.get_guild(968943687272898612)
 
 
 @client.event
 async def on_message(message):
     if "RATIO" in message.content.upper():
-        await message.channel.send(p.ratio[randint(1, len(p.ratio))])
+        await message.channel.send(p.ratio[randint(len(p.ratio))])
 
     elif "WE LOSUJ RAIDA" in message.content.upper():
         await message.channel.send("pog, twój raid to...")
         await asyncio.sleep(1)
-        await message.channel.send(p.raidyRandom[randint(1, len(p.raidyRandom))])
-
-
-@client.event
-async def on_raw_reaction_add(payload):
-    if payload.member.bot:
-        return
-    for x in activeEvents:
-        if payload.message_id == x[1]:
-            print(payload.emoji.name)
-            if payload.emoji.name in p.emojiList:
-                print("ok")
-                await x[0].Dodaj(p.emojiList.index(payload.emoji.name), payload.member.display_name)
-            return
+        await message.channel.send(p.raidyRandom[randint(len(p.raidyRandom))])
     
 
-@tree.command(name = "event", description = "zrob event", guild=discord.Object(id=968943687272898612))
-@app_commands.choices(raid=[
-        app_commands.Choice(name="KF", value="KF"),
-        app_commands.Choice(name="VoD", value="VoD"),
-        app_commands.Choice(name="VoG", value="VoG"),
-        app_commands.Choice(name="DSC", value="DSC"),
-        app_commands.Choice(name="GoS", value="GoS"),
-        app_commands.Choice(name="LW", value="LW"),])
-async def first_command(interaction, raid: app_commands.Choice[str]):
-    temp = Event(raid.value)
-    await interaction.response.send_message(content = "<@&1021880510550659102>",embed=temp.Embed())
-    mID = await interaction.original_response()
-    #print(mID.id)
-    temp.update(mID.id, mID)
-    for x in p.emojiList:
-        await mID.add_reaction(x)
+@tree.command(name = "leaderboard", description = "Show API speedrun leaderboard", guild=discord.Object(id=968943687272898612))
+@app_commands.choices(leaderboard=[
+        app_commands.Choice(name="Global", value="All registered users"),
+        app_commands.Choice(name="Local", value="This server only")])
+@app_commands.describe(leaderboard="The type of leaderboard you want to see")
+async def leaderboard(interaction, leaderboard: app_commands.Choice[str]):
+    await interaction.response.defer(thinking=True)
+    embed = discord.Embed(title = f"{leaderboard.name} raid times", color = 0x000000)
+    embed.set_footer(text="Brought to you by Elitist",icon_url="https://www.bungie.net/common/destiny2_content/icons/3c251b702026fee24488eac5cbd3a2e2.jpg")
+    if leaderboard.name == "Global":
+        embed.add_field(name = "Click on the times for RR page",value = await rr.pokazTopCzasy())
+    elif leaderboard.name == "Local":
+        embed.add_field(name = "Click on the times for RR page",value = await rr.pokazTopCzasy(interaction.guild))
+    await interaction.followup.send(embed=embed)
 
 
 @tree.command(name = "register", description = "link your Discord account with your bungie.net", guild=discord.Object(id=968943687272898612))
-async def second_command(interaction, tag: str):
-    await interaction.response.send_message(rr.dodajKonto(tag, interaction.user.id))
+@app_commands.describe(tag="Your bungie.net tag")
+async def register(interaction, tag: str):
+    await interaction.response.send_message(await rr.dodajKonto(tag, interaction.user.id))
+    await rr.rozdajRangi()
+    await rr.updateCzasy()
 
 
-@tree.command(name = "times", description = "Show best times", guild=discord.Object(id=968943687272898612))
-async def second_command(interaction):
-    embed = discord.Embed(title = "Best raid times", color = 0x000000)
-    embed.set_footer(text="Brought to you by Destinuś",icon_url="https://www.bungie.net/common/destiny2_content/icons/3c251b702026fee24488eac5cbd3a2e2.jpg")
-    embed.add_field(name = "Click on the times for RR page",value = rr.pokazTopCzasy())
-    await interaction.response.send_message(embed=embed)
-    #Dodać hiperłącza do runów
-    #zedytować globalTimes żeby zawierało instanceID
+@tree.command(name = "emblem", description = "Search for emblem stats", guild=discord.Object(id=968943687272898612))
+async def getEmblem(interaction, emblem: str):
+    await interaction.response.defer(thinking=True)
+    emlemInfo = EF.emblem_search(emblem)
+    print(emlemInfo)
+    if isinstance(emlemInfo, str):
+        await interaction.followup.send(emlemInfo)
+        return
+    else:
+        embed = discord.Embed(title = emlemInfo[0][0], color = 0x000000)
+        embed.set_footer(text="Brought to you by Destinuś",icon_url="https://www.bungie.net/common/destiny2_content/icons/3c251b702026fee24488eac5cbd3a2e2.jpg")
+        for x in range(1, len(emlemInfo[0])):
+            lines = emlemInfo[0][x].split(":")
+            embed.add_field(name = lines[0],value = lines[1], inline=False)
+            embed.set_thumbnail(url=emlemInfo[1])
+    await interaction.followup.send(embed=embed)
+
+
+@tree.command(name = "clears", description = "Show clear leaderboard for given timeframe", guild=discord.Object(id=968943687272898612))
+@app_commands.choices(leaderboard=[
+        app_commands.Choice(name="Weekly", value="Weekly")])
+@app_commands.describe(leaderboard="Timeframe")
+async def clears(interaction, leaderboard: app_commands.Choice[str]):
+    await interaction.response.defer(thinking=True)
+    rr.getCzasy(rr.zarejestrowaneKonta)
+    await interaction.followup.send(embed=await rr.ranksReset(None, True))
+
+
+@tree.command(name = "add", description = "Add this channel to enable certain functions", guild=discord.Object(id=968943687272898612))
+@app_commands.choices(leaderboard=[
+        app_commands.Choice(name="Weekly clears", value="Weekly clears"),
+        app_commands.Choice(name="Speedrun roles", value="Speedrun roles")])
+@app_commands.describe(leaderboard="Functions you want to be added for this channel")
+async def clears(interaction, leaderboard: app_commands.Choice[str]):
+    await interaction.response.defer(thinking=True)
+    if leaderboard.name == "Weekly clears":
+        rr.add(1, interaction.channel.id)
+    elif leaderboard.name == "Speedrun roles":
+        rr.add(0, interaction.guild.id)
+    await interaction.followup.send(f"Channel added to {leaderboard.name}")
+
 
 
 client.run(TOKEN)
