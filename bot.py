@@ -11,7 +11,7 @@ intents = discord.Intents.all()
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 ORACLE=None
-TOKEN = "NzkxMzE2MjAyOTc0MjE2MjQy.GuEq9s.bfQJXUvwy-6jTaatUpFeu4IHq2xgBAHXUHRC8o"
+TOKEN = "YOUR TOKEN HERE"
         
 
 @client.event
