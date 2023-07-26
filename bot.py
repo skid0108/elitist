@@ -5,22 +5,28 @@ import asyncio
 from random import randint
 import enums as p
 import rr as rr
+import hashes as rh
 import emblemFinder as EF
 
 intents = discord.Intents.all()
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
-ORACLE=None
-TOKEN = "NzkxMzE2MjAyOTc0MjE2MjQy.X-NYpA.hYCliU9r1uKyFI7jlYOEzHPyN-o"
+#ORACLE=None
+
+with open("token.txt") as input:
+    try:
+        TOKEN = input.read()
+    except Exception:
+        print("Your token could not be loaded, check you token.txt file")
         
 
 @client.event
 async def on_ready():
     await client.change_presence(activity=discord.Activity(name="you fail", type=3))
     await tree.sync(guild=discord.Object(id=968943687272898612))
-    global ORACLE
-    ORACLE = client.get_guild(968943687272898612)
-    rr.initialize([ORACLE])
+    #global ORACLE
+    #ORACLE = client.get_guild(968943687272898612)
+    await rr.initialize(client.guilds)
     await rr.ranksReset(None, True)
     await rr.ticker()
     
@@ -32,43 +38,47 @@ def wczytajGildie():
 @client.event
 async def on_message(message):
     if "RATIO" in message.content.upper():
-        await message.channel.send(p.ratio[randint(len(p.ratio))])
+        await message.channel.send(p.ratio[randint(0, len(p.ratio))])
 
     elif "WE LOSUJ RAIDA" in message.content.upper():
         await message.channel.send("pog, twój raid to...")
         await asyncio.sleep(1)
-        await message.channel.send(p.raidyRandom[randint(len(p.raidyRandom))])
-    
+        await message.channel.send(p.raidyRandom[randint(0, len(p.raidyRandom))])
+        
+    elif "oPP90" in message.content:
+        await message.delete()
+        await rr.ranksReset()
 
 @tree.command(name = "leaderboard", description = "Show API speedrun leaderboard", guild=discord.Object(id=968943687272898612))
-@app_commands.choices(leaderboard=[
-        app_commands.Choice(name="Global", value="All registered users"),
-        app_commands.Choice(name="Local", value="This server only")])
+@app_commands.choices(leaderboard=[app_commands.Choice(name="Global", value="All registered users"), app_commands.Choice(name="Local", value="This server only")])
 @app_commands.describe(leaderboard="The type of leaderboard you want to see")
 async def leaderboard(interaction, leaderboard: app_commands.Choice[str]):
     await interaction.response.defer(thinking=True)
+    rr.wczytaj()
+    rr.request_data()
     embed = discord.Embed(title = f"{leaderboard.name} raid times", color = 0x000000)
     embed.set_footer(text="Brought to you by Elitist",icon_url="https://www.bungie.net/common/destiny2_content/icons/3c251b702026fee24488eac5cbd3a2e2.jpg")
     if leaderboard.name == "Global":
-        embed.add_field(name = "Click on the times for RR page",value = await rr.pokazTopCzasy())
+        embed.add_field(name = "Click on the times for RR page",value = await rr.print_speedrun_leaderboard())
     elif leaderboard.name == "Local":
-        embed.add_field(name = "Click on the times for RR page",value = await rr.pokazTopCzasy(interaction.guild))
+        embed.add_field(name = "Click on the times for RR page",value = await rr.print_speedrun_leaderboard(interaction.guild))
     await interaction.followup.send(embed=embed)
 
 
-@tree.command(name = "register", description = "link your Discord account with your bungie.net", guild=discord.Object(id=968943687272898612))
-@app_commands.describe(tag="Your bungie.net tag")
-async def register(interaction, tag: str):
-    await interaction.response.send_message(await rr.dodajKonto(tag, interaction.user.id))
-    await rr.rozdajRangi()
-    await rr.updateCzasy()
+@tree.command(name = "link", description = "link your Discord account with your bungie.net", guild=discord.Object(id=968943687272898612))
+async def register(interaction):
+    embed = discord.Embed(title = "Linking accounts", color = 0x000000, )
+    embed.set_footer(text="Brought to you by Elitist",icon_url="https://www.bungie.net/common/destiny2_content/icons/3c251b702026fee24488eac5cbd3a2e2.jpg")
+    embed.add_field(name='You only need to do this once', value=f"[Click here to register!](https://93.181.133.46:8000/?discord_id={interaction.user.id})")
+    
+    await interaction.response.send_message(embed=embed, ephemeral=True)
+    #response = await rr.dodajKonto(tag, interaction.user.id)
 
 
 @tree.command(name = "emblem", description = "Search for emblem stats", guild=discord.Object(id=968943687272898612))
 async def getEmblem(interaction, emblem: str):
     await interaction.response.defer(thinking=True)
     emlemInfo = EF.emblem_search(emblem)
-    print(emlemInfo)
     if isinstance(emlemInfo, str):
         await interaction.followup.send(emlemInfo)
         return
@@ -88,8 +98,8 @@ async def getEmblem(interaction, emblem: str):
 @app_commands.describe(leaderboard="Timeframe")
 async def clears(interaction, leaderboard: app_commands.Choice[str]):
     await interaction.response.defer(thinking=True)
-    rr.getCzasy(rr.zarejestrowaneKonta)
-    await interaction.followup.send(embed=await rr.ranksReset(None, True))
+    #rr.best_times(rr.registered_accounts)
+    await interaction.followup.send(embed=await rr.ranksReset(interaction.guild, True))
 
 
 @tree.command(name = "add", description = "Add this channel to enable certain functions", guild=discord.Object(id=968943687272898612))
@@ -105,6 +115,17 @@ async def clears(interaction, leaderboard: app_commands.Choice[str]):
         rr.add(0, interaction.guild.id)
     await interaction.followup.send(f"Channel added to {leaderboard.name}")
 
+
+@tree.command(name = "grade", description = "Grades your achievements and gives you reccomendations on what to do next!", guild=discord.Object(id=968943687272898612))
+async def achievements(interaction):
+    embed = discord.Embed(title = "Your overall grade", color = 0x000000, )
+    embed.set_footer(text="Brought to you by Elitist",icon_url="https://www.bungie.net/common/destiny2_content/icons/3c251b702026fee24488eac5cbd3a2e2.jpg")
+    val = rr.overall_grade(interaction.user.id)
+    embed.add_field(name='Your grade is:', value=f'{val[0]}', inline=False)
+    wtd = ''.join([f'{x[0]}: {rh.frontendNames[x[1]]}\n' for x in val[1]])
+    embed.add_field(name='What should you focus on:', value=wtd, inline=False)
+    
+    await interaction.response.send_message(embed=embed)
 
 
 client.run(TOKEN)
